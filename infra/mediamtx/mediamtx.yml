@@ -1,0 +1,10 @@
+# Minimal mediamtx config: accept one published RTSP path ("test") from the
+# rtsp-source container and serve it back out over RTSP for the worker to consume.
+# No auth needed since this only runs on the internal docker network.
+
+logLevel: info
+rtspAddress: :8554
+
+paths:
+  test:
+    source: publisher
