@@ -1,0 +1,20 @@
+.env
+
+node_modules/
+dist/
+
+# Go
+worker/vms-worker
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Bun
+bun.lock
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
