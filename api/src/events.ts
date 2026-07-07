@@ -27,6 +27,7 @@ export const PersonDetectedEventSchema = z.object({
   confidence: z.number(),
   detections: z.array(DetectionSchema),
   frame: z.object({ width: z.number(), height: z.number() }),
+  annotatedImageId: z.string().optional(),
 });
 export type PersonDetectedEvent = z.infer<typeof PersonDetectedEventSchema>;
 

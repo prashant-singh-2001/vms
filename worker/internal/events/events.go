@@ -24,16 +24,21 @@ type Frame struct {
 }
 
 type PersonDetectedEvent struct {
-	ID         string      `json:"id"`
-	CameraID   string      `json:"cameraId"`
-	Type       string      `json:"type"`
-	Timestamp  string      `json:"timestamp"`
-	Confidence float64     `json:"confidence"`
-	Detections []Detection `json:"detections"`
-	Frame      Frame       `json:"frame"`
+	ID                string      `json:"id"`
+	CameraID          string      `json:"cameraId"`
+	Type              string      `json:"type"`
+	Timestamp         string      `json:"timestamp"`
+	Confidence        float64     `json:"confidence"`
+	Detections        []Detection `json:"detections"`
+	Frame             Frame       `json:"frame"`
+	AnnotatedImageID  string      `json:"annotatedImageId,omitempty"`
 }
 
 func NewPersonDetectedEvent(id, cameraID string, detections []Detection, frame Frame, ts time.Time) PersonDetectedEvent {
+	return NewPersonDetectedEventWithImage(id, cameraID, detections, frame, ts, "")
+}
+
+func NewPersonDetectedEventWithImage(id, cameraID string, detections []Detection, frame Frame, ts time.Time, annotatedImageID string) PersonDetectedEvent {
 	maxConf := 0.0
 	for _, d := range detections {
 		if d.Confidence > maxConf {
@@ -44,13 +49,14 @@ func NewPersonDetectedEvent(id, cameraID string, detections []Detection, frame F
 		detections = []Detection{}
 	}
 	return PersonDetectedEvent{
-		ID:         id,
-		CameraID:   cameraID,
-		Type:       "person_detected",
-		Timestamp:  ts.UTC().Format(time.RFC3339Nano),
-		Confidence: maxConf,
-		Detections: detections,
-		Frame:      frame,
+		ID:               id,
+		CameraID:         cameraID,
+		Type:             "person_detected",
+		Timestamp:        ts.UTC().Format(time.RFC3339Nano),
+		Confidence:       maxConf,
+		Detections:       detections,
+		Frame:            frame,
+		AnnotatedImageID: annotatedImageID,
 	}
 }
 

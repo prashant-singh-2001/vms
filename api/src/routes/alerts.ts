@@ -4,6 +4,7 @@ import type { AppVariables } from "../auth/middleware";
 import { requireAuth } from "../auth/middleware";
 import * as repo from "../repositories/alerts";
 import * as cameraRepo from "../repositories/cameras";
+import { redisSub } from "../redis/client";
 
 export const alertRoutes = new Hono<{ Variables: AppVariables }>();
 alertRoutes.use("*", requireAuth);
@@ -54,4 +55,16 @@ alertRoutes.get("/", async (c) => {
   const last = rows[rows.length - 1];
   const nextCursor = rows.length === limit && last ? encodeCursor(last.ts, last.id) : null;
   return c.json({ alerts: rows, nextCursor });
+});
+
+alertRoutes.get("/images/:imageId", async (c) => {
+  const userId = c.get("userId");
+  const imageId = c.req.param("imageId");
+
+  const image = await redisSub.get(`annotated:image:${imageId}`);
+  if (!image) {
+    return c.json({ error: "Image not found" }, 404);
+  }
+
+  return c.body(image as Buffer, { "Content-Type": "image/png" });
 });

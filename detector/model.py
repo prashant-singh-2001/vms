@@ -7,7 +7,7 @@ import os
 from typing import List, Optional
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 from pydantic import BaseModel
 from ultralytics import YOLO
 
@@ -73,3 +73,23 @@ def detect_persons(image: Image.Image) -> DetectResponse:
                 )
             )
     return DetectResponse(detections=detections)
+
+
+def annotate_detections(image: Image.Image, detections: DetectResponse) -> Image.Image:
+    """Draw bounding boxes on the image."""
+    image_copy = image.copy()
+    draw = ImageDraw.Draw(image_copy)
+    width, height = image.size
+
+    for detection in detections.detections:
+        box = detection.box
+        x1 = int(box.x * width)
+        y1 = int(box.y * height)
+        x2 = int((box.x + box.w) * width)
+        y2 = int((box.y + box.h) * height)
+
+        draw.rectangle([x1, y1, x2, y2], outline="red", width=2)
+        label = f"{detection.label} {detection.confidence:.2f}"
+        draw.text((x1, y1 - 10), label, fill="red")
+
+    return image_copy

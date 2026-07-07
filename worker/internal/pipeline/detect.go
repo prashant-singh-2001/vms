@@ -107,7 +107,22 @@ func processFrame(ctx context.Context, deps Deps, cameraID string, dedup *events
 	}
 	stats.recordDetection()
 
-	event := events.NewPersonDetectedEvent(uuid.NewString(), cameraID, detections, events.Frame{Width: width, Height: height}, now)
+	eventID := uuid.NewString()
+	imageID := ""
+
+	if len(detections) > 0 {
+		annotateCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		_, annotatedImagePNG, err := deps.Detector.DetectWithAnnotation(annotateCtx, frame)
+		cancel()
+		if err == nil && len(annotatedImagePNG) > 0 {
+			imageID = eventID + ".png"
+			if err := redisq.StoreAnnotatedImage(ctx, deps.Redis, imageID, annotatedImagePNG); err != nil {
+				log.Printf("[pipeline %s] failed to store annotated image: %v", cameraID, err)
+			}
+		}
+	}
+
+	event := events.NewPersonDetectedEventWithImage(eventID, cameraID, detections, events.Frame{Width: width, Height: height}, now, imageID)
 	if err := redisq.PublishEvent(ctx, deps.Redis, event); err != nil {
 		log.Printf("[pipeline %s] failed to publish event: %v", cameraID, err)
 	}

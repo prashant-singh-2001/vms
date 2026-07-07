@@ -22,6 +22,8 @@ const (
 	StreamEvents   = "detection:events"
 	StreamStats    = "camera:stats"
 	GroupWorkers   = "workers"
+	ImageKeyPrefix = "annotated:image:"
+	ImageExpiry    = 24 * time.Hour
 )
 
 func NewClient(url string) (*redis.Client, error) {
@@ -114,4 +116,12 @@ func PublishStats(ctx context.Context, client *redis.Client, stats events.StatsP
 			"timestamp":           stats.Timestamp,
 		},
 	}).Err()
+}
+
+func StoreAnnotatedImage(ctx context.Context, client *redis.Client, imageID string, imagePNG []byte) error {
+	return client.Set(ctx, ImageKeyPrefix+imageID, imagePNG, ImageExpiry).Err()
+}
+
+func RetrieveAnnotatedImage(ctx context.Context, client *redis.Client, imageID string) ([]byte, error) {
+	return client.Get(ctx, ImageKeyPrefix+imageID).Bytes()
 }

@@ -44,6 +44,7 @@ export const alerts = pgTable(
     detections: jsonb("detections").notNull(),
     frameWidth: integer("frame_width").notNull(),
     frameHeight: integer("frame_height").notNull(),
+    annotatedImageId: text("annotated_image_id"),
     ts: timestamp("ts", { withTimezone: true }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },

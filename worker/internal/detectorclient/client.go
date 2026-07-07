@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -65,4 +66,43 @@ func (c *Client) Detect(ctx context.Context, jpeg []byte) ([]events.Detection, e
 		return nil, err
 	}
 	return parsed.Detections, nil
+}
+
+func (c *Client) DetectWithAnnotation(ctx context.Context, jpeg []byte) ([]events.Detection, []byte, error) {
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	part, err := writer.CreateFormFile("frame", "frame.jpg")
+	if err != nil {
+		return nil, nil, err
+	}
+	if _, err := part.Write(jpeg); err != nil {
+		return nil, nil, err
+	}
+	if err := writer.Close(); err != nil {
+		return nil, nil, err
+	}
+
+	url := c.baseURL + "/detect?annotate=true"
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, &body)
+	if err != nil {
+		return nil, nil, err
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	res, err := c.http.Do(req)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return nil, nil, fmt.Errorf("detector returned status %d", res.StatusCode)
+	}
+
+	annotatedImage, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return nil, annotatedImage, nil
 }

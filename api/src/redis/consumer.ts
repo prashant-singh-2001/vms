@@ -37,6 +37,7 @@ async function handleDetectionEvent(fields: string[]): Promise<void> {
     detections: event.detections,
     frameWidth: event.frame.width,
     frameHeight: event.frame.height,
+    annotatedImageId: event.annotatedImageId,
     ts: new Date(event.timestamp),
   });
 

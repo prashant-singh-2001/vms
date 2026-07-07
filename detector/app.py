@@ -2,10 +2,11 @@ import io
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile, Query
+from fastapi.responses import StreamingResponse
 from PIL import Image
 
-from model import DetectResponse, detect_persons, load_model
+from model import DetectResponse, detect_persons, load_model, annotate_detections
 
 
 @asynccontextmanager
@@ -22,14 +23,24 @@ def health() -> dict:
     return {"ok": True}
 
 
-@app.post("/detect", response_model=DetectResponse)
-async def detect(frame: UploadFile = File(...)) -> DetectResponse:
+@app.post("/detect")
+async def detect(frame: UploadFile = File(...), annotate: bool = Query(False)):
     raw = await frame.read()
     try:
         image = Image.open(io.BytesIO(raw)).convert("RGB")
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"invalid image: {exc}") from exc
-    return detect_persons(image)
+
+    detections = detect_persons(image)
+
+    if annotate:
+        annotated_image = annotate_detections(image, detections)
+        img_bytes = io.BytesIO()
+        annotated_image.save(img_bytes, format="PNG")
+        img_bytes.seek(0)
+        return StreamingResponse(img_bytes, media_type="image/png")
+
+    return detections
 
 
 if __name__ == "__main__":

@@ -27,5 +27,6 @@ export interface Alert {
   detections: Array<{ label: string; confidence: number; box: { x: number; y: number; w: number; h: number } }>;
   frameWidth: number;
   frameHeight: number;
+  annotatedImageId?: string;
   ts: string;
 }

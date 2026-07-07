@@ -30,6 +30,7 @@ export async function listAlerts(filters: AlertFilters) {
       detections: alerts.detections,
       frameWidth: alerts.frameWidth,
       frameHeight: alerts.frameHeight,
+      annotatedImageId: alerts.annotatedImageId,
       ts: alerts.ts,
     })
     .from(alerts)
@@ -47,6 +48,7 @@ export interface NewAlert {
   detections: unknown;
   frameWidth: number;
   frameHeight: number;
+  annotatedImageId?: string;
   ts: Date;
 }
 

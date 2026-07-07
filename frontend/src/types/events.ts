@@ -22,6 +22,7 @@ export interface PersonDetectedEvent {
   confidence: number;
   detections: Detection[];
   frame: { width: number; height: number };
+  annotatedImageId?: string;
 }
 
 export type CameraRuntimeState = "connecting" | "live" | "stopped" | "error";
