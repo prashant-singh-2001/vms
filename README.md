@@ -227,11 +227,3 @@ docker compose run --rm detector pytest
 - Server-side box overlay burned into the WebRTC stream (today the frontend can overlay
   boxes client-side from the latest alert, but doesn't burn them into the video itself).
 - Alert snapshot thumbnails persisted to object storage alongside each alert row.
-
-## Deliverables checklist
-
-- [x] Source for all four services + infra, in this repo.
-- [x] `docker compose up` brings up the whole stack with a working demo path.
-- [x] README: architecture, decisions, run steps, detection model + rationale, event
-      format.
-- [ ] Demo video / deployment URL — optional per the assignment; not included here.
