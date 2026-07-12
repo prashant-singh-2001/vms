@@ -1,0 +1,184 @@
+{
+  "repository": {
+    "name": "vms",
+    "title": "Video Management System",
+    "description": "Real-time camera surveillance dashboard with WebRTC streaming and AI-powered person detection",
+    "longDescription": "A complete Video Management System (VMS) that enables users to register and monitor multiple RTSP camera feeds in real-time. Features include live WebRTC video streaming, automated person detection with annotated images showing bounding boxes, alert management with pagination, and real-time WebSocket notifications.",
+    "keywords": [
+      "camera",
+      "surveillance",
+      "video-streaming",
+      "webrtc",
+      "person-detection",
+      "yolo",
+      "real-time",
+      "dashboard",
+      "iot",
+      "monitoring"
+    ],
+    "topics": [
+      "camera-surveillance",
+      "video-management",
+      "webrtc",
+      "person-detection",
+      "yolov8",
+      "real-time-streaming",
+      "dashboard",
+      "docker",
+      "kubernetes",
+      "typescript",
+      "go",
+      "python",
+      "fastapi",
+      "hono",
+      "postgresql",
+      "redis"
+    ],
+    "homepage": "https://github.com/yourorg/vms",
+    "documentation": "https://github.com/yourorg/vms/tree/main/docs",
+    "license": "MIT"
+  },
+  "metadata": {
+    "language": "TypeScript, Go, Python",
+    "primaryLanguages": [
+      "TypeScript",
+      "Go",
+      "Python"
+    ],
+    "framework": [
+      "React",
+      "Hono",
+      "FastAPI"
+    ],
+    "database": [
+      "PostgreSQL",
+      "Redis"
+    ],
+    "containerized": true,
+    "hasDocker": true,
+    "hasKubernetes": true,
+    "testCoverage": true,
+    "ciCdIntegration": false
+  },
+  "readme": {
+    "location": "README.md",
+    "features": [
+      "Multi-camera RTSP streaming",
+      "Live video via WebRTC (WHEP)",
+      "Real-time person detection (YOLOv8)",
+      "Annotated images with bounding boxes",
+      "Alert management & filtering",
+      "WebSocket real-time notifications",
+      "Alert deduplication & rate limiting",
+      "User authentication (JWT)",
+      "Docker & Kubernetes ready",
+      "Horizontal scaling support"
+    ]
+  },
+  "requirements": {
+    "location": "REQUIREMENTS.md",
+    "functionalRequirements": 13,
+    "nonFunctionalRequirements": 6
+  },
+  "contributing": {
+    "location": "CONTRIBUTING.md",
+    "acceptingContributions": true,
+    "acceptingBugReports": true,
+    "acceptingFeatureRequests": true
+  },
+  "changelog": {
+    "location": "CHANGELOG.md",
+    "semanticVersioning": true
+  },
+  "documentation": {
+    "guides": [
+      {
+        "title": "Getting Started",
+        "file": "README.md"
+      },
+      {
+        "title": "Development Guide",
+        "file": "docs/DEVELOPMENT.md"
+      },
+      {
+        "title": "API Reference",
+        "file": "docs/API.md"
+      },
+      {
+        "title": "Deployment Guide",
+        "file": "docs/DEPLOYMENT.md"
+      },
+      {
+        "title": "Event Format",
+        "file": "docs/EVENT_FORMAT.md"
+      },
+      {
+        "title": "Quick Reference",
+        "file": "docs/QUICK_REFERENCE.md"
+      },
+      {
+        "title": "Contributing",
+        "file": "CONTRIBUTING.md"
+      }
+    ]
+  },
+  "services": [
+    {
+      "name": "Frontend",
+      "language": "TypeScript",
+      "framework": "React",
+      "buildTool": "Vite",
+      "location": "frontend/"
+    },
+    {
+      "name": "API",
+      "language": "TypeScript",
+      "framework": "Hono",
+      "runtime": "Bun",
+      "database": "PostgreSQL",
+      "cache": "Redis",
+      "location": "api/"
+    },
+    {
+      "name": "Worker",
+      "language": "Go",
+      "responsibility": "RTSP/WebRTC orchestration, detection sampling",
+      "location": "worker/"
+    },
+    {
+      "name": "Detector",
+      "language": "Python",
+      "framework": "FastAPI",
+      "model": "YOLOv8n",
+      "location": "detector/"
+    }
+  ],
+  "deployment": {
+    "supportedPlatforms": [
+      "Docker",
+      "Docker Compose",
+      "Kubernetes",
+      "AWS ECS",
+      "AWS EKS",
+      "Google Cloud Run",
+      "Azure Container Instances"
+    ],
+    "minimumRequirements": {
+      "docker": "20.10+",
+      "dockerCompose": "2.0+",
+      "kubernetes": "1.20+"
+    }
+  },
+  "community": {
+    "issuesTemplate": ".github/ISSUE_TEMPLATE/",
+    "pullRequestTemplate": ".github/pull_request_template.md",
+    "codeOwners": ".github/CODEOWNERS",
+    "licensingInfo": "LICENSE"
+  },
+  "stats": {
+    "estimatedLinesOfCode": 15000,
+    "numberOfContributors": 1,
+    "numberOfReleases": 1,
+    "createdDate": "2026-07-12"
+  }
+}

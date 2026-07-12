@@ -1,0 +1,30 @@
+# Code owners for VMS repository
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners
+* @yourteam/maintainers
+
+# Frontend
+/frontend/ @yourteam/frontend
+/frontend/src/components/ @yourteam/frontend
+/frontend/src/pages/ @yourteam/frontend
+
+# API & Backend
+/api/ @yourteam/backend
+/worker/ @yourteam/backend
+/detector/ @yourteam/ml
+
+# Infrastructure & DevOps
+/docker-compose.yml @yourteam/devops
+/.github/ @yourteam/devops
+/docs/DEPLOYMENT.md @yourteam/devops
+
+# Documentation
+/docs/ @yourteam/docs
+/README.md @yourteam/maintainers
+/CONTRIBUTING.md @yourteam/maintainers
+
+# Tests
+/api/tests/ @yourteam/backend
+/detector/tests/ @yourteam/ml
+/worker/*_test.go @yourteam/backend
