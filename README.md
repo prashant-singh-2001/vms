@@ -1,7 +1,8 @@
 # Real-Time Camera Surveillance Dashboard (WebRTC + Person Detection)
 
 A small Video Management System: register cameras by RTSP URL, watch them live in the
-browser over WebRTC, and get real-time alerts when a person appears in frame.
+browser over WebRTC, and get real-time alerts when a person appears in frame. Each detection
+includes annotated images with red bounding boxes highlighting detected humans.
 
 Four services, one `docker compose up`:
 
@@ -82,7 +83,19 @@ class `0` ("person"). Reasons:
 - Weights are baked into the Docker image at build time (`docker/Dockerfile`'s warm-up
   `RUN`), so the container works offline at runtime too.
 
-## Event format
+## Annotated Images
+
+Each person detection automatically includes a high-resolution annotated image with:
+- **Red bounding boxes** around detected humans
+- **Confidence scores** displayed on each box
+- **PNG format** stored in Redis with 24-hour retention
+- **Zero-latency** access via `/alerts/images/:imageId` endpoint
+- **Click-to-expand** UI on alerts to preview detections
+
+Images are captured at the same resolution as the source video and can be used for
+post-detection review, alert verification, or integration with external systems.
+
+## Event Format
 
 One JSON shape is used everywhere: the worker's output, the `detection:events` Redis
 stream, the Postgres `alerts` row, and the WebSocket `alert` payload. Full spec, field
@@ -97,7 +110,8 @@ notes, and the Redis stream/WS envelope layouts are in
   "timestamp": "2026-07-03T12:34:56.789Z",
   "confidence": 0.91,
   "detections": [{ "label": "person", "confidence": 0.91, "box": { "x": 0.12, "y": 0.30, "w": 0.10, "h": 0.25 } }],
-  "frame": { "width": 1280, "height": 720 }
+  "frame": { "width": 1280, "height": 720 },
+  "annotatedImageId": "event-id.png"
 }
 ```
 
