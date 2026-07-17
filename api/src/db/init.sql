@@ -28,8 +28,12 @@ CREATE TABLE IF NOT EXISTS alerts (
   detections JSONB NOT NULL,
   frame_width INTEGER NOT NULL,
   frame_height INTEGER NOT NULL,
+  annotated_image_id TEXT,
   ts TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Idempotent add so databases created before annotated_image_id existed get the column.
+ALTER TABLE alerts ADD COLUMN IF NOT EXISTS annotated_image_id TEXT;
 
 CREATE INDEX IF NOT EXISTS alerts_camera_ts_idx ON alerts (camera_id, ts DESC);

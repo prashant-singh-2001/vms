@@ -2,11 +2,38 @@ import { Hono } from "hono";
 import { z } from "zod";
 import type { AppVariables } from "../auth/middleware";
 import { requireAuth } from "../auth/middleware";
+import { verifyToken } from "../auth/jwt";
 import * as repo from "../repositories/alerts";
 import * as cameraRepo from "../repositories/cameras";
-import { redisSub } from "../redis/client";
+import { redisPub } from "../redis/client";
 
 export const alertRoutes = new Hono<{ Variables: AppVariables }>();
+
+// Registered BEFORE the requireAuth middleware so it authenticates via a ?token=
+// query param instead: browsers load this via a plain <img src> and can't set the
+// Authorization header. Same pattern as the WebSocket route.
+alertRoutes.get("/images/:imageId", async (c) => {
+  const token = c.req.query("token");
+  if (!token) {
+    return c.json({ error: "Missing token" }, 401);
+  }
+  try {
+    await verifyToken(token);
+  } catch {
+    return c.json({ error: "Invalid or expired token" }, 401);
+  }
+
+  const imageId = c.req.param("imageId");
+  // getBuffer (not get): the PNG is binary; ioredis get() UTF-8-decodes and corrupts it.
+  // redisPub (not redisSub): redisSub is pinned to the blocking XREADGROUP consumer.
+  const image = await redisPub.getBuffer(`annotated:image:${imageId}`);
+  if (!image) {
+    return c.json({ error: "Image not found" }, 404);
+  }
+
+  return c.body(image, 200, { "Content-Type": "image/png" });
+});
+
 alertRoutes.use("*", requireAuth);
 
 const QuerySchema = z.object({
@@ -55,16 +82,4 @@ alertRoutes.get("/", async (c) => {
   const last = rows[rows.length - 1];
   const nextCursor = rows.length === limit && last ? encodeCursor(last.ts, last.id) : null;
   return c.json({ alerts: rows, nextCursor });
-});
-
-alertRoutes.get("/images/:imageId", async (c) => {
-  const userId = c.get("userId");
-  const imageId = c.req.param("imageId");
-
-  const image = await redisSub.get(`annotated:image:${imageId}`);
-  if (!image) {
-    return c.json({ error: "Image not found" }, 404);
-  }
-
-  return c.body(image as Buffer, { "Content-Type": "image/png" });
 });

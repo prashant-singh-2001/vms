@@ -1,5 +1,6 @@
 import type { PersonDetectedEvent } from "../types/events";
 import { useState } from "react";
+import { getToken } from "../api/client";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -32,7 +33,7 @@ export function AlertList({ alerts }: { alerts: PersonDetectedEvent[] }) {
           {expandedId === alert.id && alert.annotatedImageId && (
             <div style={{ marginTop: "12px", padding: "8px", backgroundColor: "#f5f5f5", borderRadius: "4px" }}>
               <img
-                src={`${API_URL}/alerts/images/${alert.annotatedImageId}`}
+                src={`${API_URL}/alerts/images/${alert.annotatedImageId}?token=${getToken() ?? ""}`}
                 alt="Annotated detection"
                 style={{ maxWidth: "100%", height: "auto", borderRadius: "4px" }}
               />
